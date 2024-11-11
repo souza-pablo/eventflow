@@ -1,5 +1,7 @@
 ﻿@model EventFlow.Models.Participante
 
+@using EventFlow.Utils
+
 @{
     ViewData["Title"] = "Delete";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -34,7 +36,7 @@
             @Html.DisplayNameFor(model => model.Telefone)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telefone)
+            @($"{TelefoneFormatter.FormatarTelefone(Model.Telefone)}")
         </dd>
     </dl>
     

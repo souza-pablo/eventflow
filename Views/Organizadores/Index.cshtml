@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<EventFlow.Models.Organizador>
 
+@using EventFlow.Utils
+
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -35,7 +37,7 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Telefone)
+                @($"{TelefoneFormatter.FormatarTelefone(item.Telefone)}")
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -6,15 +6,16 @@ namespace EventFlow.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
+        [Required(ErrorMessage = "O campo Nome é obrigatório.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "O nome deve ter entre 3 e 100 caracteres.")]
         public string Nome { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "O campo E-mail é obrigatório.")]
         [EmailAddress(ErrorMessage = "O e-mail deve ser válido.")]
         public string Email { get; set; }
 
-        [Phone(ErrorMessage = "O telefone deve ser válido.")]
+        [Required(ErrorMessage = "O campo Telefone é obrigatório.")]
+        [RegularExpression(@"^\d{11}$", ErrorMessage = "O telefone deve conter exatamente 11 dígitos.")]
         public string Telefone { get; set; }
     }
 }
