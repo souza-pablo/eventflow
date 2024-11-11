@@ -51,7 +51,7 @@ namespace EventFlow.Controllers
         public IActionResult Create()
         {
             ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Nome");
-            ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Email");
+            ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Nome");
             PopularOpcoesEnums();
             return View();
         }
@@ -61,16 +61,28 @@ namespace EventFlow.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EventoId,ParticipanteId,DataInscricao,StatusPagamento,MetodoPagamento")] Inscricao inscricao)
+        public async Task<IActionResult> Create([Bind("Id,EventoId,ParticipanteId,StatusPagamento,MetodoPagamento")] Inscricao inscricao)
         {
+            var evento = await _context.Eventos.FindAsync(inscricao.EventoId);
+
+            if (evento == null)
+            {
+                ModelState.AddModelError(string.Empty, "Evento não encontrado.");
+            }
+            else if (evento.Data < DateTime.Now)
+            {
+                ModelState.AddModelError(string.Empty, "Não é possível se inscrever após a data do evento.");
+            }
+
             if (ModelState.IsValid)
             {
+                inscricao.DataInscricao = DateTime.Now;
                 _context.Add(inscricao);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Nome", inscricao.EventoId);
-            ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Email", inscricao.ParticipanteId);
+            ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Nome", inscricao.ParticipanteId);
             PopularOpcoesEnums();
             return View(inscricao);
         }
@@ -89,7 +101,7 @@ namespace EventFlow.Controllers
                 return NotFound();
             }
             ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Nome", inscricao.EventoId);
-            ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Email", inscricao.ParticipanteId);
+            ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Nome", inscricao.ParticipanteId);
             PopularOpcoesEnums();
             return View(inscricao);
         }
@@ -104,6 +116,17 @@ namespace EventFlow.Controllers
             if (id != inscricao.Id)
             {
                 return NotFound();
+            }
+
+            var evento = await _context.Eventos.FindAsync(inscricao.EventoId);
+
+            if (evento == null)
+            {
+                ModelState.AddModelError(string.Empty, "Evento não encontrado.");
+            }
+            else if (evento.Data < inscricao.DataInscricao)
+            {
+                ModelState.AddModelError(string.Empty, "Não é possível deixar a data da inscrição após a data do evento.");
             }
 
             if (ModelState.IsValid)
@@ -127,7 +150,7 @@ namespace EventFlow.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Nome", inscricao.EventoId);
-            ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Email", inscricao.ParticipanteId);
+            ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Nome", inscricao.ParticipanteId);
             PopularOpcoesEnums();
             return View(inscricao);
         }

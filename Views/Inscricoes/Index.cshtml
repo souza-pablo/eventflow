@@ -14,6 +14,12 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.Participante)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Evento)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.DataInscricao)
             </th>
             <th>
@@ -22,18 +28,18 @@
             <th>
                 @Html.DisplayNameFor(model => model.MetodoPagamento)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Evento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Participante)
-            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Participante.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Evento.Nome)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DataInscricao)
             </td>
@@ -42,12 +48,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.MetodoPagamento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Evento.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Participante.Email)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

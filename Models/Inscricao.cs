@@ -10,12 +10,14 @@ namespace EventFlow.Models
         public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Evento")]
         public int EventoId { get; set; }
 
         [Required]
+        [Display(Name = "Participante")]
         public int ParticipanteId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "O campo Data de Inscrição é obrigatório.")]
         [Display(Name = "Data de Inscrição")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime DataInscricao { get; set; }
