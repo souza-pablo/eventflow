@@ -9,35 +9,41 @@ namespace EventFlow.Models
         public int Id { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "O nome do evento deve ter no máximo 100 caracteres.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "O nome do evento deve ter entre 3 e 100 caracteres.")]
         public string Nome { get; set; }
 
         [Required]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime Data { get; set; }
-
-        [Required]
-        [StringLength(200, ErrorMessage = "O local do evento deve ter no máximo 200 caracteres.")]
-        public string Local { get; set; }
 
         [Required]
         [Range(0, double.MaxValue, ErrorMessage = "O preço deve ser um valor positivo.")]
         [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Preço")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal Preco { get; set; }
 
-        [StringLength(100)]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "A previsão climática deve ter entre 3 e 100 caracteres")]
         [Display(Name = "Previsão Climática")]
         public string PrevisaoClimatica { get; set; }
 
         [Required]
         [Display(Name = "Quantidade de Participantes")]
-        public int QuantidadeParticipantes;
+        [Range(1, int.MaxValue, ErrorMessage = "A quantidade de participantes deve ser um valor positivo.")]
+        public int QuantidadeParticipantes { get; set; }
 
         [Required]
+        [Display(Name = "Organizador")]
         public int OrganizadorId { get; set; }
 
         [ForeignKey("OrganizadorId")]
-        public Organizador Organizador { get; set; }
+        public Organizador? Organizador { get; set; }
+
+        [Required]
+        public int EnderecoId { get; set; }
+
+        [ForeignKey("EnderecoId")]
+        public Endereco? Endereco { get; set; }
 
         public ICollection<Inscricao> Inscricoes { get; set; } = new List<Inscricao>();
     }

@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using EventFlow.Data;
 using EventFlow.Models;
 using EventFlow.Enums;
-using EventFlow.ViewModels;
 
 namespace EventFlow.Controllers
 {
@@ -51,15 +50,10 @@ namespace EventFlow.Controllers
         // GET: Inscricoes/Create
         public IActionResult Create()
         {
-            //ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Local");
-            //ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Email");
-            //return View();
-            var model = new InscricaoViewModel {
-                DataInscricao = DateTime.Now, 
-                StatusPagamentoOptions = Enum.GetValues(typeof(StatusPagamento)).Cast<StatusPagamento>().Select(sp => new SelectListItem { Text = sp.ToString(), Value = ((int)sp).ToString() }),
-                MetodoPagamentoOptions = Enum.GetValues(typeof(MetodoPagamento)).Cast<MetodoPagamento>().Select(mp => new SelectListItem { Text = mp.ToString(), Value = ((int)mp).ToString() })
-            }; 
-            return View(model);
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Nome");
+            ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Email");
+            PopularOpcoesEnums();
+            return View();
         }
 
         // POST: Inscricoes/Create
@@ -67,34 +61,18 @@ namespace EventFlow.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(/*[Bind("Id,EventoId,ParticipanteId,DataInscricao,StatusPagamento,MetodoPagamento")] Inscricao inscricao*/ InscricaoViewModel model)
+        public async Task<IActionResult> Create([Bind("Id,EventoId,ParticipanteId,DataInscricao,StatusPagamento,MetodoPagamento")] Inscricao inscricao)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    _context.Add(inscricao);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Local", inscricao.EventoId);
-            //ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Email", inscricao.ParticipanteId);
-            //return View(inscricao);
             if (ModelState.IsValid)
             {
-                var inscricao = new Inscricao { 
-                    EventoId = model.EventoId,
-                    ParticipanteId = model.ParticipanteId,
-                    DataInscricao = model.DataInscricao,
-                    StatusPagamento = model.StatusPagamento,
-                    MetodoPagamento = model.MetodoPagamento
-                };
-                _context.Inscricoes.Add(inscricao);
-                _context.SaveChanges();
+                _context.Add(inscricao);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            model.StatusPagamentoOptions = Enum.GetValues(typeof(StatusPagamento)).Cast<StatusPagamento>().Select(sp => new SelectListItem { Text = sp.ToString(), Value = ((int)sp).ToString() }); 
-            model.MetodoPagamentoOptions = Enum.GetValues(typeof(MetodoPagamento)).Cast<MetodoPagamento>().Select(mp => new SelectListItem { Text = mp.ToString(), Value = ((int)mp).ToString() }); 
-            return View(model);
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Nome", inscricao.EventoId);
+            ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Email", inscricao.ParticipanteId);
+            PopularOpcoesEnums();
+            return View(inscricao);
         }
 
         // GET: Inscricoes/Edit/5
@@ -110,8 +88,9 @@ namespace EventFlow.Controllers
             {
                 return NotFound();
             }
-            ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Local", inscricao.EventoId);
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Nome", inscricao.EventoId);
             ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Email", inscricao.ParticipanteId);
+            PopularOpcoesEnums();
             return View(inscricao);
         }
 
@@ -147,9 +126,26 @@ namespace EventFlow.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Local", inscricao.EventoId);
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "Id", "Nome", inscricao.EventoId);
             ViewData["ParticipanteId"] = new SelectList(_context.Participantes, "Id", "Email", inscricao.ParticipanteId);
+            PopularOpcoesEnums();
             return View(inscricao);
+        }
+
+        private void PopularOpcoesEnums()
+        {
+            ViewData["StatusPagamentoOptions"] = new List<SelectListItem>
+            {
+                new SelectListItem { Value = ((int)StatusPagamento.Pendente).ToString(), Text = "Pendente" },
+                new SelectListItem { Value = ((int)StatusPagamento.Pago).ToString(), Text = "Pago" }
+            };
+            ViewData["MetodoPagamentoOptions"] = new List<SelectListItem>
+            {
+                new SelectListItem { Value = ((int)MetodoPagamento.PIX).ToString(), Text = "PIX" },
+                new SelectListItem { Value = ((int)MetodoPagamento.Dinheiro).ToString(), Text = "Dinheiro" },
+                new SelectListItem { Value = ((int)MetodoPagamento.CartaoCredito).ToString(), Text = "Cartão de Crédito" },
+                new SelectListItem { Value = ((int)MetodoPagamento.CartaoDebito).ToString(), Text = "Cartão de Débito" }
+            };
         }
 
         // GET: Inscricoes/Delete/5

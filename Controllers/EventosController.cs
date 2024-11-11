@@ -22,7 +22,7 @@ namespace EventFlow.Controllers
         // GET: Eventos
         public async Task<IActionResult> Index()
         {
-            var eventFlowContext = _context.Eventos.Include(e => e.Organizador);
+            var eventFlowContext = _context.Eventos.Include(e => e.Endereco).Include(e => e.Organizador);
             return View(await eventFlowContext.ToListAsync());
         }
 
@@ -35,6 +35,7 @@ namespace EventFlow.Controllers
             }
 
             var evento = await _context.Eventos
+                .Include(e => e.Endereco)
                 .Include(e => e.Organizador)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (evento == null)
@@ -48,7 +49,7 @@ namespace EventFlow.Controllers
         // GET: Eventos/Create
         public IActionResult Create()
         {
-            ViewData["OrganizadorId"] = new SelectList(_context.Organizadores, "Id", "Email");
+            ViewData["OrganizadorId"] = new SelectList(_context.Organizadores, "Id", "Nome");
             return View();
         }
 
@@ -57,15 +58,19 @@ namespace EventFlow.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Data,Local,Preco,PrevisaoClimatica,OrganizadorId")] Evento evento)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Data,QuantidadeParticipantes,Preco,PrevisaoClimatica,OrganizadorId,Endereco")] Evento evento)
         {
             if (ModelState.IsValid)
             {
+                _context.Enderecos.Add(evento.Endereco);
+                await _context.SaveChangesAsync();
+
+                evento.EnderecoId = evento.Endereco.Id;
                 _context.Add(evento);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OrganizadorId"] = new SelectList(_context.Organizadores, "Id", "Email", evento.OrganizadorId);
+            ViewData["OrganizadorId"] = new SelectList(_context.Organizadores, "Id", "Nome", evento.OrganizadorId);
             return View(evento);
         }
 
@@ -77,12 +82,12 @@ namespace EventFlow.Controllers
                 return NotFound();
             }
 
-            var evento = await _context.Eventos.FindAsync(id);
+            var evento = await _context.Eventos.Include(e => e.Endereco).FirstOrDefaultAsync(e => e.Id == id);
             if (evento == null)
             {
                 return NotFound();
             }
-            ViewData["OrganizadorId"] = new SelectList(_context.Organizadores, "Id", "Email", evento.OrganizadorId);
+            ViewData["OrganizadorId"] = new SelectList(_context.Organizadores, "Id", "Nome", evento.OrganizadorId);
             return View(evento);
         }
 
@@ -91,7 +96,7 @@ namespace EventFlow.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Data,Local,Preco,PrevisaoClimatica,OrganizadorId")] Evento evento)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Data,QuantidadeParticipantes,Preco,PrevisaoClimatica,OrganizadorId,EnderecoId,Endereco")] Evento evento)
         {
             if (id != evento.Id)
             {
@@ -102,7 +107,8 @@ namespace EventFlow.Controllers
             {
                 try
                 {
-                    _context.Update(evento);
+                    _context.Enderecos.Update(evento.Endereco);
+                    _context.Eventos.Update(evento);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -118,7 +124,7 @@ namespace EventFlow.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OrganizadorId"] = new SelectList(_context.Organizadores, "Id", "Email", evento.OrganizadorId);
+            ViewData["OrganizadorId"] = new SelectList(_context.Organizadores, "Id", "Nome", evento.OrganizadorId);
             return View(evento);
         }
 
@@ -131,6 +137,7 @@ namespace EventFlow.Controllers
             }
 
             var evento = await _context.Eventos
+                .Include(e => e.Endereco)
                 .Include(e => e.Organizador)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (evento == null)

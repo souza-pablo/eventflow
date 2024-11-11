@@ -1,4 +1,4 @@
-﻿@model EventFlow.ViewModels.InscricaoViewModel
+﻿@model EventFlow.Models.Inscricao
 
 @{
     ViewData["Title"] = "Create";
@@ -28,12 +28,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="StatusPagamento" class="control-label"></label>
-                <select asp-for="StatusPagamento" class="form-control" asp-items="Model.StatusPagamentoOptions"></select>
+                <select asp-for="StatusPagamento" class="form-control" asp-items="ViewBag.StatusPagamentoOptions"></select>
                 <span asp-validation-for="StatusPagamento" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="MetodoPagamento" class="control-label"></label>
-                <select asp-for="MetodoPagamento" class="form-control" asp-items="Model.MetodoPagamentoOptions"></select>
+                <select asp-for="MetodoPagamento" class="form-control" asp-items="ViewBag.MetodoPagamentoOptions"></select>
                 <span asp-validation-for="MetodoPagamento" class="text-danger"></span>
             </div>
             <div class="form-group">

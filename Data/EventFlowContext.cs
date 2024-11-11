@@ -13,6 +13,7 @@ namespace EventFlow.Data
         public DbSet<Participante> Participantes { get; set; }
         public DbSet<Inscricao> Inscricoes { get; set; }
         public DbSet<Organizador> Organizadores { get; set; }
+        public DbSet<Endereco> Enderecos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,6 +21,12 @@ namespace EventFlow.Data
                 .HasOne(e => e.Organizador)
                 .WithMany(o => o.Eventos)
                 .HasForeignKey(e => e.OrganizadorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Evento>()
+                .HasOne(e => e.Endereco)
+                .WithOne()
+                .HasForeignKey<Evento>(i => i.EnderecoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Inscricao>()

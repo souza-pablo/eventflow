@@ -17,6 +17,7 @@ namespace EventFlow.Models
 
         [Required]
         [Display(Name = "Data de Inscrição")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime DataInscricao { get; set; }
 
         [Required]
@@ -28,9 +29,9 @@ namespace EventFlow.Models
         public MetodoPagamento MetodoPagamento { get; set; }
 
         [ForeignKey("EventoId")]
-        public Evento Evento { get; set; }
+        public Evento? Evento { get; set; }
 
         [ForeignKey("ParticipanteId")]
-        public Participante Participante { get; set; }
+        public Participante? Participante { get; set; }
     }
 }
