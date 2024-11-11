@@ -106,4 +106,35 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Quando o campo CEP perder o foco
+            $('#Endereco_CEP').blur(function () {
+                var cep = $(this).val().replace('-', ''); // Remover o hífen do CEP
+                var regex = /^\d{8}$/ // Validação do CEP usando regex
+                if (regex.test(cep)) {  // Verifica se o CEP tem 8 dígitos
+                    $.ajax({
+                        url: `https://viacep.com.br/ws/${cep}/json/`,
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data && !data.erro) {
+                                // Preencher os campos de endereço com a resposta da API
+                                $('#Endereco_Logradouro').val(data.logradouro);
+                                $('#Endereco_Bairro').val(data.bairro);
+                                $('#Endereco_Localidade').val(data.localidade);
+                                $('#Endereco_UF').val(data.uf);
+                            } else {
+                                alert("CEP não encontrado.");
+                            }
+                        },
+                        error: function () {
+                            alert("Erro ao buscar CEP.");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 }

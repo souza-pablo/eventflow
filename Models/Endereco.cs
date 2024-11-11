@@ -8,7 +8,7 @@ namespace EventFlow.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "O campo CEP é obrigatório.")]
-        [RegularExpression(@"^\d{5}-\d{3}$", ErrorMessage = "O CEP deve estar no formato 00000-000.")]
+        [RegularExpression(@"^\d{8}$", ErrorMessage = "O CEP deve conter 8 dígitos.")]
         public string CEP { get; set; }
 
         [Required(ErrorMessage = "O campo Logradouro é obrigatório.")]
