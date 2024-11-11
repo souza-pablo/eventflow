@@ -34,6 +34,7 @@ namespace EventFlow.Controllers
             }
 
             var organizador = await _context.Organizadores
+                .Include(o => o.Eventos)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (organizador == null)
             {

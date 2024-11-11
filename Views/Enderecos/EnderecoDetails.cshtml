@@ -1,12 +1,14 @@
 ﻿@model EventFlow.Models.Endereco
 
+@using EventFlow.Utils
+
 <h4>Endereço</h4>
 <dl class="row">
     <dt class="col-sm-2">
         @Html.DisplayNameFor(model => model.CEP)
     </dt>
     <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.CEP)
+        @($"{StringFormatter.FormatarCEP(Model.CEP)}")
     </dd>
     <dt class="col-sm-2">
         @Html.DisplayNameFor(model => model.Logradouro)
