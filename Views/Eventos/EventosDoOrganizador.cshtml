@@ -1,0 +1,34 @@
+﻿@model ICollection<EventFlow.Models.Evento>
+
+<h4>Eventos Organizados</h4>
+<hr />
+@if (Model != null && Model.Any())
+
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.First().Nome)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Data)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Preco)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var evento in Model)
+
+            {
+                <tr>
+                    <td>@evento.Nome</td>
+                    <td>@evento.Data.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@evento.Preco.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+else
+
+{
+    <p>Este organizador não possui eventos.</p>
+}

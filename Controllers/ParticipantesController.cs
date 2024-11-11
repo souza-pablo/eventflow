@@ -34,6 +34,8 @@ namespace EventFlow.Controllers
             }
 
             var participante = await _context.Participantes
+                .Include(p => p.Inscricoes)
+                .ThenInclude(i => i.Evento)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (participante == null)
             {

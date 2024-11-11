@@ -1,0 +1,32 @@
+﻿@model ICollection<EventFlow.Models.Inscricao>
+
+<h4>Inscrições do Participante</h4>
+<hr />
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.First().Evento.Nome)</th>
+                <th>@Html.DisplayNameFor(model => model.First().DataInscricao)</th>
+                <th>@Html.DisplayNameFor(model => model.First().StatusPagamento)</th>
+                <th>@Html.DisplayNameFor(model => model.First().MetodoPagamento)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var inscricao in Model)
+            {
+                <tr>
+                    <td>@inscricao.Evento.Nome</td>
+                    <td>@inscricao.DataInscricao.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@inscricao.StatusPagamento</td>
+                    <td>@inscricao.MetodoPagamento</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Este participante não possui inscrições.</p>
+}
